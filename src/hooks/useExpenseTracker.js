@@ -1,154 +1,171 @@
 import { useState, useEffect } from 'react';
-
-const DEFAULT_WALLET_BALANCE = 5000;
+import { v4 as uuidv4 } from 'uuid'; // Make sure to npm install uuid if not installed
 
 export const useExpenseTracker = () => {
   const [state, setState] = useState({
-    walletBalance: DEFAULT_WALLET_BALANCE,
+    walletBalance: 5000, // Default starting balance
     expenses: [],
     totalExpenses: 0,
     chartData: { food: 0, entertainment: 0, travel: 0 },
-    maxCategoryAmount: 0,
+    maxCategoryAmount: 0
   });
-
+  
   const [incomeModalOpen, setIncomeModalOpen] = useState(false);
   const [expenseModalOpen, setExpenseModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
-
-  // Load data from localStorage on initial render
+  
+  // Load data from localStorage on initial load
   useEffect(() => {
     const savedExpenses = localStorage.getItem('expenses');
-    const savedWallet = localStorage.getItem('wallet');
-
-    const expenses = savedExpenses ? JSON.parse(savedExpenses) : [];
-    const walletBalance = savedWallet ? parseFloat(savedWallet) : DEFAULT_WALLET_BALANCE;
-
-    updateState(expenses, walletBalance);
-  }, []);
-
-  // Recalculate derived state whenever expenses or wallet changes
-  const updateState = (expenses, walletBalance) => {
-    const totalExpenses = expenses.reduce((sum, expense) => sum + expense.price, 0);
+    const savedBalance = localStorage.getItem('walletBalance');
     
-    // Calculate category totals
+    if (savedExpenses) {
+      const expenses = JSON.parse(savedExpenses);
+      if (Array.isArray(expenses)) {
+        const chartData = calculateChartData(expenses);
+        const totalExpenses = calculateTotalExpenses(expenses);
+        const maxAmount = calculateMaxCategoryAmount(chartData);
+        
+        setState(prev => ({
+          ...prev,
+          expenses,
+          totalExpenses,
+          chartData,
+          maxCategoryAmount: maxAmount,
+          walletBalance: savedBalance ? parseFloat(savedBalance) : prev.walletBalance,
+        }));
+      }
+    }
+  }, []);
+  
+  // Save to localStorage whenever expenses or balance changes
+  useEffect(() => {
+    localStorage.setItem('expenses', JSON.stringify(state.expenses));
+    localStorage.setItem('walletBalance', state.walletBalance.toString());
+  }, [state.expenses, state.walletBalance]);
+  
+  const calculateChartData = (expenses) => {
     const chartData = { food: 0, entertainment: 0, travel: 0 };
     
     expenses.forEach(expense => {
       const category = expense.category.toLowerCase();
-      if (category in chartData) {
+      if (chartData[category] !== undefined) {
         chartData[category] += expense.price;
       }
     });
     
-    // Find max category amount for bar chart scaling
-    const maxCategoryAmount = Math.max(...Object.values(chartData));
-    
-    setState({
-      walletBalance,
-      expenses,
-      totalExpenses,
-      chartData,
-      maxCategoryAmount
-    });
+    return chartData;
   };
-
-  // Save current state to localStorage
-  const saveState = (expenses, walletBalance) => {
-    localStorage.setItem('expenses', JSON.stringify(expenses));
-    localStorage.setItem('wallet', walletBalance.toString());
-    updateState(expenses, walletBalance);
+  
+  const calculateTotalExpenses = (expenses) => {
+    return expenses.reduce((total, expense) => total + expense.price, 0);
   };
-
-  // Add income to wallet
+  
+  const calculateMaxCategoryAmount = (chartData) => {
+    return Math.max(...Object.values(chartData), 1000); // Minimum of 1000 for visualization
+  };
+  
   const addIncome = (amount) => {
-    if (isNaN(amount) || amount <= 0) {
-      alert('Please enter a valid income amount.');
-      return false;
-    }
-    
-    const newBalance = state.walletBalance + amount;
-    saveState(state.expenses, newBalance);
-    setIncomeModalOpen(false);
+    setState(prev => ({
+      ...prev,
+      walletBalance: prev.walletBalance + amount
+    }));
     return true;
   };
-
-  // Add a new expense
-  const addExpense = (expense) => {
-    const { title, price, category, date } = expense;
-    
-    if (!title || isNaN(price) || price <= 0 || !category || !date) {
-      alert('Please fill all fields with valid values.');
-      return false;
-    }
-    
-    if (state.walletBalance < price) {
-      alert('Not enough wallet balance.');
-      return false;
-    }
-    
-    const newExpense = {
-      id: Date.now().toString(),
-      title,
-      price,
-      category,
-      date
+  
+  const addExpense = (expenseData) => {
+    const expense = {
+      ...expenseData,
+      id: uuidv4()  // Generate unique ID
     };
     
-    const newExpenses = [...state.expenses, newExpense];
-    const newBalance = state.walletBalance - price;
+    // Check if we have enough balance
+    if (state.walletBalance < expense.price) {
+      return false; // Not enough balance
+    }
     
-    saveState(newExpenses, newBalance);
-    setExpenseModalOpen(false);
+    const updatedExpenses = [expense, ...state.expenses];
+    const chartData = calculateChartData(updatedExpenses);
+    const totalExpenses = calculateTotalExpenses(updatedExpenses);
+    const maxAmount = calculateMaxCategoryAmount(chartData);
+    
+    setState(prev => ({
+      ...prev,
+      expenses: updatedExpenses,
+      totalExpenses,
+      chartData,
+      maxCategoryAmount: maxAmount,
+      walletBalance: prev.walletBalance - expense.price
+    }));
+    
     return true;
   };
-
-  // Update an existing expense
+  
   const updateExpense = (updatedExpense) => {
-    if (!editingExpense) return false;
+    const existingExpense = state.expenses.find(exp => exp.id === updatedExpense.id);
     
-    const originalPrice = editingExpense.price;
-    const priceDifference = originalPrice - updatedExpense.price;
-    
-    if (priceDifference < 0 && Math.abs(priceDifference) > state.walletBalance) {
-      alert('Not enough wallet balance for this update.');
+    if (!existingExpense) {
       return false;
     }
     
-    const newExpenses = state.expenses.map(expense => 
-      expense.id === updatedExpense.id ? updatedExpense : expense
+    // Calculate price difference
+    const priceDifference = updatedExpense.price - existingExpense.price;
+    
+    // Check if we have enough balance for the price difference
+    if (priceDifference > 0 && state.walletBalance < priceDifference) {
+      return false; // Not enough balance for the increase in price
+    }
+    
+    const updatedExpenses = state.expenses.map(exp => 
+      exp.id === updatedExpense.id ? updatedExpense : exp
     );
     
-    const newBalance = state.walletBalance + priceDifference;
+    const chartData = calculateChartData(updatedExpenses);
+    const totalExpenses = calculateTotalExpenses(updatedExpenses);
+    const maxAmount = calculateMaxCategoryAmount(chartData);
     
-    saveState(newExpenses, newBalance);
-    setEditingExpense(null);
-    setExpenseModalOpen(false);
+    setState(prev => ({
+      ...prev,
+      expenses: updatedExpenses,
+      totalExpenses,
+      chartData,
+      maxCategoryAmount: maxAmount,
+      walletBalance: prev.walletBalance - priceDifference
+    }));
+    
     return true;
   };
-
-  // Delete an expense
+  
   const deleteExpense = (id) => {
-    const expenseToDelete = state.expenses.find(e => e.id === id);
-    if (!expenseToDelete) return false;
+    const expenseToDelete = state.expenses.find(exp => exp.id === id);
     
-    const newExpenses = state.expenses.filter(e => e.id !== id);
-    const newBalance = state.walletBalance + expenseToDelete.price;
-    
-    saveState(newExpenses, newBalance);
-    return true;
-  };
-
-  // Open the edit expense modal with the selected expense
-  const editExpense = (id) => {
-    const expense = state.expenses.find(e => e.id === id);
-    if (expense) {
-      setEditingExpense(expense);
-      setExpenseModalOpen(true);
-      return true;
+    if (!expenseToDelete) {
+      return;
     }
-    return false;
+    
+    const updatedExpenses = state.expenses.filter(exp => exp.id !== id);
+    const chartData = calculateChartData(updatedExpenses);
+    const totalExpenses = calculateTotalExpenses(updatedExpenses);
+    const maxAmount = calculateMaxCategoryAmount(chartData);
+    
+    setState(prev => ({
+      ...prev,
+      expenses: updatedExpenses,
+      totalExpenses,
+      chartData,
+      maxCategoryAmount: maxAmount,
+      walletBalance: prev.walletBalance + expenseToDelete.price
+    }));
   };
-
+  
+  const editExpense = (id) => {
+    const expenseToEdit = state.expenses.find(exp => exp.id === id);
+    if (expenseToEdit) {
+      setEditingExpense(expenseToEdit);
+      setExpenseModalOpen(true);
+    }
+  };
+  
   return {
     state,
     incomeModalOpen,
@@ -156,7 +173,6 @@ export const useExpenseTracker = () => {
     editingExpense,
     setIncomeModalOpen,
     setExpenseModalOpen,
-    setEditingExpense,
     addIncome,
     addExpense,
     updateExpense,

@@ -1,3 +1,4 @@
+// src/utils/chartColors.js
 export const CHART_COLORS = {
   food: '#6b21a8',        // Purple
   entertainment: '#fbbf24', // Yellow

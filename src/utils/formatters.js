@@ -1,5 +1,11 @@
+// src/utils/formatters.js
 export const formatCurrency = (amount) => {
-  return `$${amount.toFixed(2)}`;
+  return amount.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 };
 
 export const getCategoryKey = (category) => {
