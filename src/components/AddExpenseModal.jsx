@@ -152,6 +152,9 @@ export function AddExpenseModal({ isOpen, onClose, onSubmit, expenseToEdit }) {
               <option value="Food">Food</option>
               <option value="Entertainment">Entertainment</option>
               <option value="Travel">Travel</option>
+              <option value="Study">Study</option>
+              <option value="Utensils">Utensils</option>
+              <option value="Electronics">Electronics</option>
             </select>
           </div>
           

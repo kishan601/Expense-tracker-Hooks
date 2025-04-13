@@ -104,6 +104,9 @@ function App() {
                 <div className="legend-item"><span className="legend-color food"></span>Food</div>
                 <div className="legend-item"><span className="legend-color entertainment"></span>Entertainment</div>
                 <div className="legend-item"><span className="legend-color travel"></span>Travel</div>
+                <div className="legend-item"><span className="legend-color study"></span>Study</div>
+                <div className="legend-item"><span className="legend-color utensils"></span>Utensils</div>
+                <div className="legend-item"><span className="legend-color electronics"></span>Electronics</div>
               </div>
             </div>
           </div>

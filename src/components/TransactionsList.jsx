@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUtensils, FaFilm, FaPlane, FaPencilAlt, FaTrash } from 'react-icons/fa';
+import { FaUtensils, FaFilm, FaPlane, FaPencilAlt, FaTrash, FaBook, FaShoppingBasket, FaLaptop } from 'react-icons/fa';
 
 export function TransactionsList({ expenses, onEditExpense, onDeleteExpense }) {
   const getCategoryIcon = (category) => {
@@ -10,6 +10,12 @@ export function TransactionsList({ expenses, onEditExpense, onDeleteExpense }) {
         return <FaFilm />;
       case 'travel':
         return <FaPlane />;
+      case 'study':
+        return <FaBook />;
+      case 'utensils':
+        return <FaShoppingBasket />;
+      case 'electronics':
+        return <FaLaptop />;
       default:
         return <FaUtensils />;
     }
@@ -23,6 +29,12 @@ export function TransactionsList({ expenses, onEditExpense, onDeleteExpense }) {
         return '#fbbf24'; // Yellow
       case 'travel':
         return '#22c55e'; // Green
+      case 'study':
+        return '#3b82f6'; // Blue
+      case 'utensils':
+        return '#ec4899'; // Pink
+      case 'electronics':
+        return '#14b8a6'; // Teal
       default:
         return '#6b21a8'; // Default to purple
     }

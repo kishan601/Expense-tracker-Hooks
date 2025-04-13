@@ -298,6 +298,18 @@ header h1 {
   background-color: #22c55e;
 }
 
+.legend-color.study {
+  background-color: #3b82f6;
+}
+
+.legend-color.utensils {
+  background-color: #ec4899;
+}
+
+.legend-color.electronics {
+  background-color: #14b8a6;
+}
+
 /* Bottom Section */
 .bottom-section {
   display: grid;

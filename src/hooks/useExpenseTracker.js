@@ -6,7 +6,7 @@ export const useExpenseTracker = () => {
     walletBalance: 5000, // Default starting balance
     expenses: [],
     totalExpenses: 0,
-    chartData: { food: 0, entertainment: 0, travel: 0 },
+    chartData: { food: 0, entertainment: 0, travel: 0, study: 0, utensils: 0, electronics: 0 },
     maxCategoryAmount: 0
   });
   
@@ -52,7 +52,7 @@ export const useExpenseTracker = () => {
   }, [state.expenses, state.walletBalance]);
   
   const calculateChartData = (expenses) => {
-    const chartData = { food: 0, entertainment: 0, travel: 0 };
+    const chartData = { food: 0, entertainment: 0, travel: 0, study: 0, utensils: 0, electronics: 0 };
     
     expenses.forEach(expense => {
       const category = expense.category.toLowerCase();
