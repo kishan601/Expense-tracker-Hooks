@@ -16,12 +16,35 @@ function App() {
     editingExpense,
     setIncomeModalOpen,
     setExpenseModalOpen,
+    setEditingExpense,
     addIncome,
     addExpense,
     updateExpense,
     deleteExpense,
     editExpense
   } = useExpenseTracker();
+
+  // Combined handler for expense submission
+  const handleExpenseSubmit = (expenseData) => {
+    if (expenseData.id) {
+      return updateExpense(expenseData);
+    } else {
+      return addExpense(expenseData);
+    }
+  };
+
+  // Handler to close income modal
+  const handleCloseIncomeModal = () => {
+    setIncomeModalOpen(false);
+  };
+
+  // Handler to close expense modal and clear editing state
+  const handleCloseExpenseModal = () => {
+    setExpenseModalOpen(false);
+    if (editingExpense) {
+      setEditingExpense(null);
+    }
+  };
 
   return (
     <div className="app">
@@ -81,14 +104,14 @@ function App() {
         
         <AddIncomeModal 
           isOpen={incomeModalOpen} 
-          onClose={() => setIncomeModalOpen(false)} 
+          onClose={handleCloseIncomeModal} 
           onAddIncome={addIncome} 
         />
         
         <AddExpenseModal 
           isOpen={expenseModalOpen} 
-          onClose={() => setExpenseModalOpen(false)} 
-          onSubmit={editingExpense ? updateExpense : addExpense} 
+          onClose={handleCloseExpenseModal} 
+          onSubmit={handleExpenseSubmit} 
           expenseToEdit={editingExpense}
         />
         

@@ -76,7 +76,7 @@ export const useExpenseTracker = () => {
   const addExpense = (expenseData) => {
     const expense = {
       ...expenseData,
-      id: uuidv4()  // Generate unique ID
+      id: expenseData.id || uuidv4()  // Generate unique ID if not provided
     };
     
     // Check if we have enough balance
@@ -173,6 +173,7 @@ export const useExpenseTracker = () => {
     editingExpense,
     setIncomeModalOpen,
     setExpenseModalOpen,
+    setEditingExpense,
     addIncome,
     addExpense,
     updateExpense,
