@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useExpenseTracker } from './hooks/useExpenseTracker';
 import { TransactionsList } from './components/TransactionsList';
 import { ExpenseCharts } from './components/ExpenseCharts';
@@ -23,6 +23,17 @@ function App() {
     deleteExpense,
     editExpense
   } = useExpenseTracker();
+
+  // Add method for Cypress tests to reset state
+  useEffect(() => {
+    if (window.Cypress) {
+      window.resetApp = () => {
+        localStorage.removeItem('expenses');
+        localStorage.removeItem('walletBalance');
+        window.location.reload();
+      };
+    }
+  }, []);
 
   // Combined handler for expense submission
   const handleExpenseSubmit = (expenseData) => {
@@ -56,7 +67,7 @@ function App() {
         <div className="main-dashboard">
           <div className="top-section">
             <div className="balance-card">
-              <h2>Wallet Balance: <span className="balance-amount">{formatCurrency(state.walletBalance)}</span></h2>
+              <h2>Wallet Balance: <span className="balance-amount">{state.walletBalance}</span></h2>
               <button 
                 className="add-btn income-btn" 
                 onClick={() => setIncomeModalOpen(true)}
@@ -66,7 +77,7 @@ function App() {
             </div>
             
             <div className="expense-card">
-              <h2>Expenses: <span className="expense-amount">{formatCurrency(state.totalExpenses)}</span></h2>
+              <h2>Expenses: <span className="expense-amount">{state.totalExpenses}</span></h2>
               <button 
                 className="add-btn expense-btn" 
                 onClick={() => setExpenseModalOpen(true)}

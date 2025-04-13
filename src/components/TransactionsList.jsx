@@ -1,5 +1,4 @@
 import React from 'react';
-import { formatCurrency } from '../utils/formatters';
 import { FaUtensils, FaFilm, FaPlane } from 'react-icons/fa';
 
 export function TransactionsList({ expenses, onEditExpense, onDeleteExpense }) {
@@ -17,7 +16,7 @@ export function TransactionsList({ expenses, onEditExpense, onDeleteExpense }) {
   };
   
   if (!expenses || expenses.length === 0) {
-    return <div className="empty-state">No transactions yet</div>;
+    return <div className="empty-state">No transactions!</div>;
   }
   
   return (
@@ -36,7 +35,7 @@ export function TransactionsList({ expenses, onEditExpense, onDeleteExpense }) {
           
           <div className="transaction-actions-wrapper">
             <span className="transaction-amount">
-              {formatCurrency(expense.price)}
+              {expense.price}
             </span>
             <div className="transaction-actions">
               <button 

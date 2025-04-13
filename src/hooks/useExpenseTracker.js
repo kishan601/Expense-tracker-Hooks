@@ -20,20 +20,27 @@ export const useExpenseTracker = () => {
     const savedBalance = localStorage.getItem('walletBalance');
     
     if (savedExpenses) {
-      const expenses = JSON.parse(savedExpenses);
-      if (Array.isArray(expenses)) {
-        const chartData = calculateChartData(expenses);
-        const totalExpenses = calculateTotalExpenses(expenses);
-        const maxAmount = calculateMaxCategoryAmount(chartData);
-        
-        setState(prev => ({
-          ...prev,
-          expenses,
-          totalExpenses,
-          chartData,
-          maxCategoryAmount: maxAmount,
-          walletBalance: savedBalance ? parseFloat(savedBalance) : prev.walletBalance,
-        }));
+      try {
+        const expenses = JSON.parse(savedExpenses);
+        if (Array.isArray(expenses)) {
+          const chartData = calculateChartData(expenses);
+          const totalExpenses = calculateTotalExpenses(expenses);
+          const maxAmount = calculateMaxCategoryAmount(chartData);
+          
+          setState(prev => ({
+            ...prev,
+            expenses,
+            totalExpenses,
+            chartData,
+            maxCategoryAmount: maxAmount,
+            walletBalance: savedBalance ? parseFloat(savedBalance) : 5000, // Ensure we fall back to 5000
+          }));
+        }
+      } catch (e) {
+        console.error("Error parsing saved expenses:", e);
+        // If there's an error, reset to defaults
+        localStorage.removeItem('expenses');
+        localStorage.removeItem('walletBalance');
       }
     }
   }, []);
@@ -66,10 +73,18 @@ export const useExpenseTracker = () => {
   };
   
   const addIncome = (amount) => {
+    // Ensure amount is a number
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount) || numAmount <= 0) {
+      return false;
+    }
+    
     setState(prev => ({
       ...prev,
-      walletBalance: prev.walletBalance + amount
+      walletBalance: prev.walletBalance + numAmount
     }));
+    
+    setIncomeModalOpen(false); // Close the modal after successful addition
     return true;
   };
   
