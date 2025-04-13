@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaTimes, FaTag, FaDollarSign, FaList, FaCalendarAlt } from 'react-icons/fa';
 
 export function AddExpenseModal({ isOpen, onClose, onSubmit, expenseToEdit }) {
   const [title, setTitle] = useState('');
@@ -46,7 +47,6 @@ export function AddExpenseModal({ isOpen, onClose, onSubmit, expenseToEdit }) {
     setError('');
     
     try {
-      // eslint-disable-next-line no-unused-vars
       const result = onSubmit({
         id: expenseToEdit?.id || '',
         title,
@@ -71,35 +71,79 @@ export function AddExpenseModal({ isOpen, onClose, onSubmit, expenseToEdit }) {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>{expenseToEdit ? 'Edit Expense' : 'Add New Expense'}</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 style={{ margin: 0 }}>{expenseToEdit ? 'Edit Expense' : 'Add New Expense'}</h2>
+          <button 
+            onClick={onClose} 
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              cursor: 'pointer',
+              color: 'var(--text-light)',
+              display: 'flex',
+              padding: '0.5rem'
+            }}
+            aria-label="Close modal"
+          >
+            <FaTimes />
+          </button>
+        </div>
         
-        {error && <div className="error-message" style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+        {error && (
+          <div className="error-message" style={{ 
+            backgroundColor: 'rgba(244, 63, 94, 0.1)', 
+            color: 'var(--secondary-color)', 
+            padding: '0.75rem 1rem', 
+            borderRadius: 'var(--radius)', 
+            marginBottom: '1.5rem',
+            fontSize: '0.875rem',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <span style={{ marginRight: '0.5rem' }}>⚠️</span> {error}
+          </div>
+        )}
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
+            <label htmlFor="title" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)', fontWeight: '500' }}>
+              <FaTag style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
+              Expense Title
+            </label>
             <input
+              id="title"
               type="text"
               name="title"
               className="form-control"
-              placeholder="Expense Title"
+              placeholder="What did you spend on?"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
           
           <div className="form-group">
+            <label htmlFor="price" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)', fontWeight: '500' }}>
+              <FaDollarSign style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
+              Amount
+            </label>
             <input
+              id="price"
               type="number"
               name="price"
               className="form-control"
-              placeholder="Amount"
+              placeholder="How much did you spend?"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
             />
           </div>
           
           <div className="form-group">
+            <label htmlFor="category" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)', fontWeight: '500' }}>
+              <FaList style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
+              Category
+            </label>
             <select
+              id="category"
               name="category"
               className="form-control"
               value={category}
@@ -112,7 +156,12 @@ export function AddExpenseModal({ isOpen, onClose, onSubmit, expenseToEdit }) {
           </div>
           
           <div className="form-group">
+            <label htmlFor="date" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)', fontWeight: '500' }}>
+              <FaCalendarAlt style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
+              Date
+            </label>
             <input
+              id="date"
               type="date"
               name="date"
               className="form-control"

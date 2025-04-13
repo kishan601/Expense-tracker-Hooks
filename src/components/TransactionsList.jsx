@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUtensils, FaFilm, FaPlane } from 'react-icons/fa';
+import { FaUtensils, FaFilm, FaPlane, FaPencilAlt, FaTrash } from 'react-icons/fa';
 
 export function TransactionsList({ expenses, onEditExpense, onDeleteExpense }) {
   const getCategoryIcon = (category) => {
@@ -15,8 +15,26 @@ export function TransactionsList({ expenses, onEditExpense, onDeleteExpense }) {
     }
   };
   
+  const getCategoryColor = (category) => {
+    switch(category.toLowerCase()) {
+      case 'food':
+        return '#6b21a8'; // Purple
+      case 'entertainment':
+        return '#fbbf24'; // Yellow
+      case 'travel':
+        return '#22c55e'; // Green
+      default:
+        return '#6b21a8'; // Default to purple
+    }
+  };
+  
   if (!expenses || expenses.length === 0) {
-    return <div className="empty-state">No transactions!</div>;
+    return (
+      <div className="empty-state">
+        <p>No transactions yet!</p>
+        <p>Add your first expense to get started tracking your spending.</p>
+      </div>
+    );
   }
   
   return (
@@ -24,7 +42,7 @@ export function TransactionsList({ expenses, onEditExpense, onDeleteExpense }) {
       {expenses.map(expense => (
         <li key={expense.id} className="transaction-item">
           <div className="transaction-details">
-            <div className="transaction-icon">
+            <div className="transaction-icon" style={{ backgroundColor: `${getCategoryColor(expense.category)}20`, color: getCategoryColor(expense.category) }}>
               {getCategoryIcon(expense.category)}
             </div>
             <div className="transaction-info">
@@ -41,14 +59,16 @@ export function TransactionsList({ expenses, onEditExpense, onDeleteExpense }) {
               <button 
                 className="action-btn edit-btn" 
                 onClick={() => onEditExpense(expense.id)}
+                aria-label="Edit expense"
               >
-                ✎
+                <FaPencilAlt size={12} />
               </button>
               <button 
                 className="action-btn delete-btn" 
                 onClick={() => onDeleteExpense(expense.id)}
+                aria-label="Delete expense"
               >
-                ✕
+                <FaTrash size={12} />
               </button>
             </div>
           </div>

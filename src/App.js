@@ -5,7 +5,7 @@ import { ExpenseCharts } from './components/ExpenseCharts';
 import { AddIncomeModal } from './components/AddIncomeModal';
 import { AddExpenseModal } from './components/AddExpenseModal';
 import { ThemeToggle } from './components/ThemeToggle';
-import { formatCurrency } from './utils/formatters';
+import { FaWallet, FaChartPie, FaPlusCircle, FaUndo } from 'react-icons/fa';
 import './App.css';
 
 function App() {
@@ -21,7 +21,8 @@ function App() {
     addExpense,
     updateExpense,
     deleteExpense,
-    editExpense
+    editExpense,
+    resetWalletBalance
   } = useExpenseTracker();
 
   // Add method for Cypress tests to reset state
@@ -67,22 +68,33 @@ function App() {
         <div className="main-dashboard">
           <div className="top-section">
             <div className="balance-card">
-              <h2>Wallet Balance: <span className="balance-amount">{state.walletBalance}</span></h2>
-              <button 
-                className="add-btn income-btn" 
-                onClick={() => setIncomeModalOpen(true)}
-              >
-                + Add Income
-              </button>
+              <h2><FaWallet style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} /> Wallet Balance</h2>
+              <p className="balance-amount">{state.walletBalance}</p>
+              <div className="button-group">
+                <button 
+                  className="add-btn income-btn" 
+                  onClick={() => setIncomeModalOpen(true)}
+                >
+                  <FaPlusCircle style={{ marginRight: '0.5rem' }} /> Add Income
+                </button>
+                <button 
+                  className="reset-btn" 
+                  onClick={resetWalletBalance}
+                  title="Reset balance to default"
+                >
+                  <FaUndo />
+                </button>
+              </div>
             </div>
             
             <div className="expense-card">
-              <h2>Expenses: <span className="expense-amount">{state.totalExpenses}</span></h2>
+              <h2><FaChartPie style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} /> Expenses</h2>
+              <p className="expense-amount">{state.totalExpenses}</p>
               <button 
                 className="add-btn expense-btn" 
                 onClick={() => setExpenseModalOpen(true)}
               >
-                + Add Expense
+                <FaPlusCircle style={{ marginRight: '0.5rem' }} /> Add Expense
               </button>
             </div>
             

@@ -88,6 +88,14 @@ export const useExpenseTracker = () => {
     return true;
   };
   
+  const resetWalletBalance = () => {
+    setState(prev => ({
+      ...prev,
+      walletBalance: 5000, // Reset to default value
+    }));
+    return true;
+  };
+  
   const addExpense = (expenseData) => {
     const expense = {
       ...expenseData,
@@ -193,6 +201,7 @@ export const useExpenseTracker = () => {
     addExpense,
     updateExpense,
     deleteExpense,
-    editExpense
+    editExpense,
+    resetWalletBalance
   };
 };
