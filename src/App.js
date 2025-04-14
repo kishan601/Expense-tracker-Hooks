@@ -4,6 +4,9 @@ import { TransactionsList } from './components/TransactionsList';
 import { ExpenseCharts } from './components/ExpenseCharts';
 import { AddIncomeModal } from './components/AddIncomeModal';
 import { AddExpenseModal } from './components/AddExpenseModal';
+import { ReportsModal } from './components/ReportsModal';
+import { BudgetsModal } from './components/BudgetsModal';
+import { BillsModal } from './components/BillsModal';
 import { ThemeToggle } from './components/ThemeToggle';
 import { 
   FaWallet, 
@@ -44,6 +47,11 @@ function App() {
     editExpense,
     resetWalletBalance
   } = useExpenseTracker();
+  
+  // Modal states for new features
+  const [reportsModalOpen, setReportsModalOpen] = useState(false);
+  const [budgetsModalOpen, setBudgetsModalOpen] = useState(false);
+  const [billsModalOpen, setBillsModalOpen] = useState(false);
   
   // Date/time state
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -179,7 +187,7 @@ function App() {
           <div className="top-section">
             <div className="balance-card">
               <h2><FaWallet style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} /> Wallet Balance</h2>
-              <p className="balance-amount">{formatCurrency(state.walletBalance)}</p>
+              <p className="balance-amount">{formatCurrency(state.walletBalance || 0)}</p>
               
               {/* Progress indicator for wallet */}
               <div className="progress-indicator" style={{ 
@@ -249,7 +257,7 @@ function App() {
                     fontWeight: 'bold', 
                     color: availableToSpend > 0 ? 'var(--success-color)' : 'var(--secondary-color)' 
                   }}>
-                    {formatCurrency(availableToSpend)}
+                    {formatCurrency(availableToSpend || 0)}
                   </div>
                 </div>
                 
@@ -300,7 +308,7 @@ function App() {
                     <span style={{ color: 'var(--text-light)' }}>Savings Goal</span>
                   </div>
                   <div style={{ fontWeight: 'bold', color: 'var(--text-light)' }}>
-                    {formatCurrency(savingsGoal)}
+                    {formatCurrency(savingsGoal || 0)}
                   </div>
                 </div>
                 
@@ -325,7 +333,7 @@ function App() {
                   color: 'var(--text-light)'
                 }}>
                   <div>{Math.round(savingsProgress)}% completed</div>
-                  <div>{formatCurrency(state.walletBalance)} / {formatCurrency(savingsGoal)}</div>
+                  <div>{formatCurrency(state.walletBalance || 0)} / {formatCurrency(savingsGoal || 0)}</div>
                 </div>
               </div>
               
@@ -348,7 +356,7 @@ function App() {
             
             <div className="expense-card">
               <h2><FaChartPie style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} /> Expenses</h2>
-              <p className="expense-amount">{formatCurrency(state.totalExpenses)}</p>
+              <p className="expense-amount">{formatCurrency(state.totalExpenses || 0)}</p>
               
               {/* Progress indicator for expenses */}
               <div className="progress-indicator" style={{ 
@@ -467,7 +475,7 @@ function App() {
                       }}>
                         <div style={{ color: 'var(--text-light)', marginBottom: '5px' }}>Avg. Expense</div>
                         <div style={{ fontWeight: 'bold', color: 'var(--text-light)' }}>
-                          {formatCurrency(avgExpense)}
+                          {formatCurrency(avgExpense || 0)}
                         </div>
                       </div>
                     </>
@@ -523,7 +531,7 @@ function App() {
                         fontWeight: 'bold', 
                         color: 'var(--secondary-color)'
                       }}>
-                        {formatCurrency(latestExpense.amount)}
+                        {formatCurrency(latestExpense.amount || 0)}
                       </div>
                     </div>
                     <div style={{ 
@@ -617,7 +625,7 @@ function App() {
                     ) : (
                       <FaFire style={{ marginRight: '5px' }} />
                     )}
-                    {formatCurrency(state.totalExpenses)} / {formatCurrency(8000)}
+                    {formatCurrency(state.totalExpenses || 0)} / {formatCurrency(8000 || 0)}
                   </div>
                 </div>
                 
@@ -649,7 +657,7 @@ function App() {
                     )}
                   </div>
                   <div>
-                    {formatCurrency(Math.max(0, 8000 - state.totalExpenses))} remaining
+                    {formatCurrency(Math.max(0, 8000 - (state.totalExpenses || 0)))} remaining
                   </div>
                 </div>
               </div>
@@ -661,45 +669,54 @@ function App() {
                 marginTop: '15px',
                 justifyContent: 'center'
               }}>
-                <button style={{ 
-                  background: 'rgba(255,255,255,0.1)', 
-                  border: 'none', 
-                  borderRadius: 'var(--radius)', 
-                  padding: '8px 12px',
-                  color: 'var(--text-light)',
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}>
+                <button 
+                  onClick={() => setReportsModalOpen(true)}
+                  style={{ 
+                    background: 'rgba(255,255,255,0.1)', 
+                    border: 'none', 
+                    borderRadius: 'var(--radius)', 
+                    padding: '8px 12px',
+                    color: 'var(--text-light)',
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
                   <FaChartBar style={{ marginRight: '5px' }} />
                   Reports
                 </button>
-                <button style={{ 
-                  background: 'rgba(255,255,255,0.1)', 
-                  border: 'none', 
-                  borderRadius: 'var(--radius)', 
-                  padding: '8px 12px',
-                  color: 'var(--text-light)',
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}>
+                <button 
+                  onClick={() => setBudgetsModalOpen(true)}
+                  style={{ 
+                    background: 'rgba(255,255,255,0.1)', 
+                    border: 'none', 
+                    borderRadius: 'var(--radius)', 
+                    padding: '8px 12px',
+                    color: 'var(--text-light)',
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
                   <FaCoins style={{ marginRight: '5px' }} />
                   Budgets
                 </button>
-                <button style={{ 
-                  background: 'rgba(255,255,255,0.1)', 
-                  border: 'none', 
-                  borderRadius: 'var(--radius)', 
-                  padding: '8px 12px',
-                  color: 'var(--text-light)',
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}>
+                <button 
+                  onClick={() => setBillsModalOpen(true)}
+                  style={{ 
+                    background: 'rgba(255,255,255,0.1)', 
+                    border: 'none', 
+                    borderRadius: 'var(--radius)', 
+                    padding: '8px 12px',
+                    color: 'var(--text-light)',
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
                   <FaCreditCard style={{ marginRight: '5px' }} />
                   Bills
                 </button>
@@ -724,6 +741,16 @@ function App() {
           </div>
         </div>
         
+        {/* In App.js where ReportsModal is used */}
+{/* In App.js */}
+<ReportsModal 
+  isOpen={reportsModalOpen}
+  onClose={() => setReportsModalOpen(false)}
+  expenses={state.expenses} // Make sure state.expenses is correctly defined
+  walletBalance={state.walletBalance}
+/>
+
+        {/* Original modals */}
         <AddIncomeModal 
           isOpen={incomeModalOpen} 
           onClose={handleCloseIncomeModal} 
@@ -735,6 +762,24 @@ function App() {
           onClose={handleCloseExpenseModal} 
           onSubmit={handleExpenseSubmit} 
           expenseToEdit={editingExpense}
+        />
+        
+        {/* New feature modals */}
+        <ReportsModal 
+          isOpen={reportsModalOpen}
+          onClose={() => setReportsModalOpen(false)}
+          expenses={state.expenses}
+          walletBalance={state.walletBalance || 0}
+        />
+        
+        <BudgetsModal 
+          isOpen={budgetsModalOpen}
+          onClose={() => setBudgetsModalOpen(false)}
+        />
+        
+        <BillsModal 
+          isOpen={billsModalOpen}
+          onClose={() => setBillsModalOpen(false)}
         />
         
         <ThemeToggle />
