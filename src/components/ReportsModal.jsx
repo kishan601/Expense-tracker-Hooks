@@ -4,33 +4,39 @@ import { chartColors } from '../utils/chartColors';
 import { formatCurrency } from '../utils/formatters';
 
 export const ReportsModal = ({ isOpen, onClose, expenses, walletBalance }) => {
+  // Add debugging logs
+  console.log("ReportsModal received expenses:", expenses);
+  if (expenses && expenses.length > 0) {
+    console.log("First expense:", expenses[0]);
+  }
+  
   if (!isOpen) return null;
   
   // Force calculation of amounts by directly extracting them from expenses
-  // and adding them up
+  // and adding them up - using 'price' instead of 'amount'
   const calculateTotalAmount = () => {
     let total = 0;
     if (expenses && expenses.length > 0) {
       for (let i = 0; i < expenses.length; i++) {
-        if (expenses[i] && typeof expenses[i].amount === 'number') {
-          total += expenses[i].amount;
+        if (expenses[i] && typeof expenses[i].price === 'number') {
+          total += expenses[i].price;
         }
       }
     }
     return total;
   };
   
-  // Directly calculate category totals
+  // Directly calculate category totals - using 'price' instead of 'amount'
   const calculateCategoryTotals = () => {
     const result = {};
     if (expenses && expenses.length > 0) {
       for (let i = 0; i < expenses.length; i++) {
         const expense = expenses[i];
-        if (expense && expense.category && typeof expense.amount === 'number') {
+        if (expense && expense.category && typeof expense.price === 'number') {
           if (!result[expense.category]) {
             result[expense.category] = 0;
           }
-          result[expense.category] += expense.amount;
+          result[expense.category] += expense.price;
         }
       }
     }
@@ -64,7 +70,7 @@ export const ReportsModal = ({ isOpen, onClose, expenses, walletBalance }) => {
     if (expenses && expenses.length) {
       expenses.forEach((expense, index) => {
         const date = expense.date ? new Date(expense.date).toLocaleDateString() : 'Unknown date';
-        reportText += `${index + 1}. ${date} - ${expense.category} - ${formatCurrency(expense.amount)} - ${expense.note || 'No note'}\n`;
+        reportText += `${index + 1}. ${date} - ${expense.category} - ${formatCurrency(expense.price)} - ${expense.note || 'No note'}\n`;
       });
     } else {
       reportText += "No transactions recorded.\n";
@@ -248,7 +254,7 @@ export const ReportsModal = ({ isOpen, onClose, expenses, walletBalance }) => {
             </h3>
             
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', margin: '15px 0' }}>
-              {/* Insight Cards */}
+              {/* Insight Cards - Use expense.price instead of expense.amount */}
               <div style={{ 
                 flex: '1 0 calc(33% - 15px)', 
                 padding: '12px', 
@@ -261,7 +267,7 @@ export const ReportsModal = ({ isOpen, onClose, expenses, walletBalance }) => {
                 </div>
                 {expenses && expenses.length > 0 ? (
                   <div style={{ fontWeight: 'bold' }}>
-                    {formatCurrency(Math.max(...expenses.map(e => e && typeof e.amount === 'number' ? e.amount : 0)))}
+                    {formatCurrency(Math.max(...expenses.map(e => e && typeof e.price === 'number' ? e.price : 0)))}
                   </div>
                 ) : (
                   <div>No expenses</div>
