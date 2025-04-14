@@ -6,7 +6,7 @@ export const PieChart = ({ data }) => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
-  useEffect(() => {
+  const createPieChart = (isDarkMode) => {
     if (chartRef && chartRef.current) {
       // Destroy existing chart if it exists
       if (chartInstance.current) {
@@ -14,7 +14,6 @@ export const PieChart = ({ data }) => {
       }
 
       const ctx = chartRef.current.getContext('2d');
-      const isDarkMode = document.body.classList.contains('dark-mode');
       
       // Process the data to ensure we're using the correct colors
       const processedData = {
@@ -78,6 +77,12 @@ export const PieChart = ({ data }) => {
         }
       });
     }
+  };
+
+  // Initial render
+  useEffect(() => {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    createPieChart(isDarkMode);
     
     // Cleanup
     return () => {
@@ -85,81 +90,14 @@ export const PieChart = ({ data }) => {
         chartInstance.current.destroy();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   // Listen for theme changes
   useEffect(() => {
     const handleThemeChange = () => {
-      if (chartRef && chartRef.current) {
-        // Force chart redraw when theme changes
-        if (chartInstance.current) {
-          chartInstance.current.destroy();
-        }
-        
-        // Re-render the chart with the same data
-        const ctx = chartRef.current.getContext('2d');
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        
-        // Process the data again (same as in the first useEffect)
-        const processedData = {
-          labels: [],
-          values: [],
-          colors: []
-        };
-        
-        Object.entries(data).forEach(([category, value]) => {
-          if (value > 0) {
-            processedData.labels.push(category);
-            processedData.values.push(value);
-            processedData.colors.push(chartColors[category.toLowerCase()]);
-          }
-        });
-        
-        if (processedData.labels.length === 0) {
-          processedData.labels = ['No data'];
-          processedData.values = [1];
-          processedData.colors = ['#e2e8f0'];
-        }
-        
-        chartInstance.current = new Chart(ctx, {
-          type: 'pie',
-          data: {
-            labels: processedData.labels,
-            datasets: [{
-              data: processedData.values,
-              backgroundColor: processedData.colors,
-              borderColor: 'var(--card-bg)',
-              borderWidth: 2,
-              hoverOffset: 10
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    const label = context.label || '';
-                    const value = context.raw || 0;
-                    const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
-                    const percentage = Math.round((value / total) * 100);
-                    return `${label}: ${value} (${percentage}%)`;
-                  }
-                },
-                backgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
-                titleColor: isDarkMode ? '#f1f5f9' : '#1e293b',
-                bodyColor: isDarkMode ? '#f1f5f9' : '#1e293b',
-                borderColor: isDarkMode ? '#334155' : '#e2e8f0',
-                borderWidth: 1
-              },
-              legend: {
-                display: false
-              }
-            }
-          }
-        });
-      }
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      createPieChart(isDarkMode);
     };
     
     // Listen for the theme change event
@@ -168,6 +106,7 @@ export const PieChart = ({ data }) => {
     return () => {
       document.removeEventListener('themeChange', handleThemeChange);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   return (
@@ -181,7 +120,7 @@ export const BarChart = ({ data, maxAmount }) => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
-  const renderChart = () => {
+  const createBarChart = (isDarkMode) => {
     if (chartRef && chartRef.current) {
       // Destroy existing chart if it exists
       if (chartInstance.current) {
@@ -189,9 +128,6 @@ export const BarChart = ({ data, maxAmount }) => {
       }
 
       const ctx = chartRef.current.getContext('2d');
-      
-      // Check if dark mode is active
-      const isDarkMode = document.body.classList.contains('dark-mode');
       
       // Process the data to ensure we're using the correct colors
       const processedData = {
@@ -259,11 +195,20 @@ export const BarChart = ({ data, maxAmount }) => {
               beginAtZero: true,
               max: max,
               grid: {
-                display: false,
-                color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                display: true, // Show grid lines
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.1)', // More visible in dark mode
+                lineWidth: isDarkMode ? 0.5 : 0.5, // Slightly thicker in dark mode
+                borderDash: isDarkMode ? [] : [], // Solid line in dark mode
+                drawBorder: true,
+                drawOnChartArea: true,
+                drawTicks: true,
+              },
+              border: {
+                display: true,
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.1)', // More visible border
               },
               ticks: {
-                color: isDarkMode ? '#f1f5f9' : 'var(--text-light)', // Light color in dark mode
+                color: isDarkMode ? '#ffffff' : 'var(--text-light)',
                 font: {
                   size: 10
                 }
@@ -271,10 +216,20 @@ export const BarChart = ({ data, maxAmount }) => {
             },
             y: {
               grid: {
-                display: false
+                display: true, // Show grid lines
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.1)', // More visible in dark mode
+                lineWidth: isDarkMode ? 0.5 : 0.5, // Slightly thicker in dark mode
+                borderDash: isDarkMode ? [] : [], // Solid line in dark mode
+                drawBorder: true,
+                drawOnChartArea: true,
+                drawTicks: true,
+              },
+              border: {
+                display: true,
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.1)', // More visible border
               },
               ticks: {
-                color: isDarkMode ? '#f1f5f9' : 'var(--text-secondary)', // Light color in dark mode
+                color: isDarkMode ? '#ffffff' : 'var(--text-secondary)',
                 font: {
                   size: 12
                 }
@@ -288,7 +243,8 @@ export const BarChart = ({ data, maxAmount }) => {
 
   // Initial render
   useEffect(() => {
-    renderChart();
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    createBarChart(isDarkMode);
     
     // Cleanup
     return () => {
@@ -296,12 +252,14 @@ export const BarChart = ({ data, maxAmount }) => {
         chartInstance.current.destroy();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, maxAmount]);
 
   // Listen for theme changes
   useEffect(() => {
     const handleThemeChange = () => {
-      renderChart();
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      createBarChart(isDarkMode);
     };
     
     // Listen for the theme change event
@@ -310,6 +268,7 @@ export const BarChart = ({ data, maxAmount }) => {
     return () => {
       document.removeEventListener('themeChange', handleThemeChange);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, maxAmount]);
 
   return (
@@ -319,6 +278,7 @@ export const BarChart = ({ data, maxAmount }) => {
   );
 };
 
+// Export as an object to match how it's used in App.js
 export const ExpenseCharts = {
   PieChart,
   BarChart
