@@ -196,12 +196,17 @@ export const ReportsModal = ({ isOpen, onClose, expenses, walletBalance }) => {
                 Category Analysis
               </h3>
               
-              <div style={{ 
-                maxHeight: '200px', 
-                overflowY: 'auto', 
-                marginTop: '10px',
-                padding: '5px 0' 
-              }}>
+              <div 
+                className="custom-scrollbar"
+                style={{ 
+                  maxHeight: '200px', 
+                  overflowY: 'auto', 
+                  marginTop: '10px',
+                  padding: '5px 0',
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: 'rgba(255,255,255,0.2) rgba(255,255,255,0.05)'
+                }}
+              >
                 {sortedCategories.length > 0 ? (
                   sortedCategories.map(([category, amount], index) => (
                     <div key={index} style={{ 
