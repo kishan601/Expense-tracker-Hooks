@@ -1,13 +1,11 @@
-// src/utils/formatters.js
 export const formatCurrency = (amount) => {
-  return amount.toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  // Handle undefined or null values
+  if (amount === undefined || amount === null) {
+    return '$0.00';
+  }
+  
+  return `$${amount.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
-  });
-};
-
-export const getCategoryKey = (category) => {
-  return category.toLowerCase();
+  })}`;
 };
