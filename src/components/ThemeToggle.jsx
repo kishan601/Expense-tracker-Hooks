@@ -3,7 +3,7 @@ import { FaSun, FaMoon } from 'react-icons/fa';
 
 export function ThemeToggle() {
   const [darkMode, setDarkMode] = useState(false);
-  
+
   useEffect(() => {
     // Check if user has a saved preference
     const savedTheme = localStorage.getItem('theme');
@@ -15,7 +15,7 @@ export function ThemeToggle() {
       document.body.classList.remove('dark-mode');
     }
   }, []);
-  
+
   const toggleTheme = () => {
     if (darkMode) {
       // Switch to light mode
@@ -27,10 +27,13 @@ export function ThemeToggle() {
       localStorage.setItem('theme', 'dark');
     }
     setDarkMode(!darkMode);
+    
+    // Dispatch custom event when theme changes
+    document.dispatchEvent(new CustomEvent('themeChange'));
   };
-  
+
   return (
-    <button 
+    <button
       onClick={toggleTheme}
       className="theme-toggle-btn"
       style={{

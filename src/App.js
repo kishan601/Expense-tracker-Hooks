@@ -6,6 +6,7 @@ import { AddIncomeModal } from './components/AddIncomeModal';
 import { AddExpenseModal } from './components/AddExpenseModal';
 import { ThemeToggle } from './components/ThemeToggle';
 import { FaWallet, FaChartPie, FaPlusCircle, FaUndo } from 'react-icons/fa';
+import { chartColors } from './utils/chartColors';
 import './App.css';
 
 function App() {
@@ -101,12 +102,24 @@ function App() {
             <div className="pie-chart-container">
               <ExpenseCharts.PieChart data={state.chartData} />
               <div className="chart-legend">
-                <div className="legend-item"><span className="legend-color food"></span>Food</div>
-                <div className="legend-item"><span className="legend-color entertainment"></span>Entertainment</div>
-                <div className="legend-item"><span className="legend-color travel"></span>Travel</div>
-                <div className="legend-item"><span className="legend-color study"></span>Study</div>
-                <div className="legend-item"><span className="legend-color utensils"></span>Utensils</div>
-                <div className="legend-item"><span className="legend-color electronics"></span>Electronics</div>
+                <div className="legend-item">
+                  <span className="legend-color" style={{ backgroundColor: chartColors.food }}></span>Food
+                </div>
+                <div className="legend-item">
+                  <span className="legend-color" style={{ backgroundColor: chartColors.entertainment }}></span>Entertainment
+                </div>
+                <div className="legend-item">
+                  <span className="legend-color" style={{ backgroundColor: chartColors.travel }}></span>Travel
+                </div>
+                <div className="legend-item">
+                  <span className="legend-color" style={{ backgroundColor: chartColors.study }}></span>Study
+                </div>
+                <div className="legend-item">
+                  <span className="legend-color" style={{ backgroundColor: chartColors.utensils }}></span>Utensils
+                </div>
+                <div className="legend-item">
+                  <span className="legend-color" style={{ backgroundColor: chartColors.electronics }}></span>Electronics
+                </div>
               </div>
             </div>
           </div>

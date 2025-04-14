@@ -286,30 +286,6 @@ header h1 {
   margin-right: 0.5rem;
 }
 
-.legend-color.food {
-  background-color: #6b21a8;
-}
-
-.legend-color.entertainment {
-  background-color: #fbbf24;
-}
-
-.legend-color.travel {
-  background-color: #22c55e;
-}
-
-.legend-color.study {
-  background-color: #3b82f6;
-}
-
-.legend-color.utensils {
-  background-color: #ec4899;
-}
-
-.legend-color.electronics {
-  background-color: #14b8a6;
-}
-
 /* Bottom Section */
 .bottom-section {
   display: grid;
@@ -580,6 +556,32 @@ header h1 {
   box-shadow: var(--shadow-md);
 }
 
+/* Theme toggle button */
+.theme-toggle-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  border: none;
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  transition: var(--transition);
+  z-index: 100;
+}
+
+.theme-toggle-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-xl);
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .app-container {
@@ -599,9 +601,16 @@ header h1 {
   .expense-amount {
     font-size: 1.75rem;
   }
+  
+  .theme-toggle-btn {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
 }
 
-/* Dark Mode Styles - for ThemeToggle component */
+/* Dark Mode Styles */
 .dark-mode {
   --background: #0f172a;
   --card-bg: #1e293b;
